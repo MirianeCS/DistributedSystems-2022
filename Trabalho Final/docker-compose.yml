@@ -1,0 +1,76 @@
+version: '3'
+services:
+  service_a1:
+    depends_on:
+      - mongoDB1
+    build: ./serviceA
+    environment:
+      - NAME=SERVICEA1
+      - CONTAINER_PORT=7001
+      - MONGO_PORT=27017
+      - NAME_DB=mongoDB1
+    ports:    
+      - '7001:7001'
+    volumes:
+      - './serviceA:/app'  
+    networks:
+      - network-balanceador 
+  service_a2:
+    depends_on:
+      - mongoDB2
+    build: ./serviceA
+    environment:
+      - NAME=SERVICEA2
+      - CONTAINER_PORT=7002 
+      - MONGO_PORT=27018
+      - NAME_DB=mongoDB2
+    ports:    
+      - '7002:7002'
+    volumes:
+      - './serviceA:/app'  
+    networks:
+      - network-balanceador   
+  balanceador-carga:
+    depends_on:
+      - service_a1
+      - service_a2
+    build: .
+    ports: 
+      - '7000:7000'
+    volumes:
+      - '.:/app'
+    networks:
+      - network-balanceador    
+  mongoDB1:
+    image: 'mongo:latest'
+    ports:
+      - 27017:27017
+    networks:
+      - network-balanceador   
+    volumes:
+      - mongoDB_data_container1:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    logging:
+      driver: none  
+  mongoDB2:
+    image: 'mongo:latest'
+    command: mongod --port 27018
+    ports:
+      - 27018:27018
+    networks:
+      - network-balanceador  
+    volumes:
+      - mongoDB_data_container2:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root 
+    logging:
+      driver: none    
+volumes:
+  mongoDB_data_container1: 
+  mongoDB_data_container2:             
+networks:
+    network-balanceador:
+        driver: bridge        

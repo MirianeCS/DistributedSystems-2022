@@ -1,0 +1,14 @@
+{
+  "name": "sd-projeto-final-balanceador",
+  "version": "1.0.0",
+  "description": "Projeto final SD",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: Algo deu ruim\" && exit 1"
+  },
+  "author": "Franciene-Miriane",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
